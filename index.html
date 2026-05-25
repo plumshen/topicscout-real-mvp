@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TopicScout AI｜研究方向探索工具</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.65;
+    }
+    .nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #e2e8f0; }
+    .nav-inner { max-width: 1120px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 38px; height: 38px; border-radius: 16px; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .brand-title { font-size: 18px; font-weight: 800; }
+    .brand-sub { color: #64748b; font-size: 12px; margin-top: -2px; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+    .hero { display: grid; grid-template-columns: 1.02fr .98fr; gap: 42px; align-items: center; padding: 70px 20px 58px; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 8px 14px; font-size: 14px; box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    h1 { margin: 22px 0 0; font-size: clamp(38px, 5.5vw, 62px); line-height: 1.08; letter-spacing: -1.5px; }
+    .lead { color: #475569; font-size: 18px; margin: 24px 0 0; max-width: 650px; }
+    .checks { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; color: #64748b; font-size: 14px; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 28px; box-shadow: 0 20px 50px rgba(15,23,42,.08); padding: 24px; }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 18px; }
+    .eyebrow { color: #64748b; font-size: 13px; font-weight: 700; }
+    .card-title { font-size: 24px; font-weight: 850; margin-top: 2px; }
+    .iconbox { width: 48px; height: 48px; border-radius: 18px; background: #f1f5f9; display:flex; align-items:center; justify-content:center; font-size: 22px; }
+    label { display:block; font-size: 14px; font-weight: 700; color:#334155; margin-bottom: 8px; }
+    input, select, textarea { width: 100%; border: 1px solid #cbd5e1; background: white; border-radius: 17px; padding: 13px 14px; outline: none; font-size: 15px; color: #0f172a; }
+    textarea { min-height: 86px; resize: vertical; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-row { margin-bottom: 14px; }
+    .btn { border: 0; background: #0f172a; color: white; padding: 13px 18px; border-radius: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(15,23,42,.12); }
+    .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .btn.secondary { background: white; color: #0f172a; border: 1px solid #e2e8f0; box-shadow: none; }
+    .section { padding: 64px 0; }
+    .section.white { background: white; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; }
+    .section h2 { font-size: 34px; line-height:1.18; margin: 0; letter-spacing: -0.8px; }
+    .section-intro { color:#64748b; margin-top: 12px; max-width: 760px; }
+    .status { margin-top: 16px; padding: 14px 16px; border-radius: 18px; background: #f1f5f9; color: #475569; font-size: 14px; display: none; }
+    .status.error { display: block; background: #fef2f2; color: #991b1b; }
+    .status.ok { display: block; background: #ecfdf5; color: #166534; }
+    .status.loading { display: block; background: #eff6ff; color: #1d4ed8; }
+    .direction-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px; }
+    .direction-card { background: white; border:1px solid #e2e8f0; border-radius: 28px; padding: 22px; box-shadow: 0 10px 24px rgba(15,23,42,.05); }
+    .direction-card h3 { margin:0; font-size:20px; line-height:1.25; }
+    .muted { color:#64748b; font-size: 14px; }
+    .badge { display:inline-flex; align-items:center; border-radius: 999px; background:#f1f5f9; color:#334155; font-size:12px; font-weight:700; padding: 5px 10px; }
+    .metrics { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:16px 0; }
+    .metric { background:#f8fafc; border-radius:18px; padding:12px; font-size:14px; }
+    .metric strong { display:block; color:#0f172a; font-size:16px; }
+    .warn { background:#fffbeb; color:#92400e; border-radius:18px; padding:12px; font-size:14px; margin:14px 0; }
+    ul { padding-left: 20px; margin: 8px 0 0; color:#475569; font-size:14px; }
+    .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .tag { background:#f1f5f9; color:#334155; border-radius:999px; padding: 5px 10px; font-size:12px; font-weight:700; }
+    .two-col { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+    .keyword-box { padding:16px; border:1px solid #e2e8f0; background:white; border-radius:18px; display:flex; justify-content:space-between; gap:12px; margin-top:10px; }
+    .brief { background:#0f172a; color:white; border-radius:28px; padding:24px; }
+    .brief-item { background:rgba(255,255,255,.09); border-radius:18px; padding:14px; margin-top:12px; color:#cbd5e1; }
+    .brief-item strong { color:white; display:block; margin-bottom:4px; }
+    .table-wrap { margin-top:24px; overflow-x:auto; background:white; border:1px solid #e2e8f0; border-radius: 24px; }
+    table { width:100%; min-width:980px; border-collapse: collapse; font-size: 14px; }
+    th { text-align:left; background:#f1f5f9; color:#475569; padding:14px; }
+    td { padding:14px; border-top:1px solid #e2e8f0; vertical-align: top; color:#475569; }
+    td:first-child { color:#0f172a; font-weight:800; }
+    .rel-high { background:#dcfce7; color:#166534; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:800; }
+    .rel-mid { background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:800; }
+    .rel-low { background:#f1f5f9; color:#475569; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:800; }
+    .actions-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+    @media (max-width: 860px) { .hero, .direction-grid, .two-col { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="logo">T</div>
+        <div>
+          <div class="brand-title">TopicScout AI</div>
+          <div class="brand-sub">兴趣 → 研究方向 → 关键词 → 文献初筛</div>
+        </div>
+      </div>
+      <button class="btn" onclick="document.getElementById('inputCard').scrollIntoView({behavior:'smooth'})">开始探索</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div>
+        <div class="pill">✨ 真实 AI 输出版 MVP</div>
+        <h1>把一个模糊兴趣，变成可以研究的方向。</h1>
+        <p class="lead">
+          输入你的兴趣、阶段、目标和方法偏好，TopicScout AI 会生成研究方向卡片、关键词路径、导师讨论简报和初步文献搜索建议。
+        </p>
+        <div class="checks">
+          <span>✅ 不替你决定选题</span>
+          <span>✅ 显示风险和限制</span>
+          <span>✅ 方便拿去和导师讨论</span>
+        </div>
+      </div>
+
+      <div id="inputCard" class="card">
+        <div class="card-head">
+          <div>
+            <div class="eyebrow">产品入口</div>
+            <div class="card-title">生成研究方向地图</div>
+          </div>
+          <div class="iconbox">🧭</div>
+        </div>
+
+        <div class="form-row">
+          <label>你的兴趣方向</label>
+          <input id="interest" value="AI 与心理健康" />
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>研究阶段</label>
+            <select id="stage">
+              <option>本科生</option>
+              <option selected>硕士生</option>
+              <option>博士早期</option>
+              <option>科研助理</option>
+              <option>青年教师</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>主要目标</label>
+            <select id="goal">
+              <option selected>寻找论文选题</option>
+              <option>准备开题</option>
+              <option>寻找长期方向</option>
+              <option>准备和导师讨论</option>
+              <option>准备投稿或课题申请</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>偏好的研究方法或资源</label>
+          <input id="method" value="问卷 / 访谈 / 文献综述" />
+        </div>
+        <div class="form-row">
+          <label>补充约束，可不填</label>
+          <textarea id="constraints" placeholder="例如：没有实验室设备；希望 3 个月内完成；导师方向偏教育心理；希望能发中文论文……"></textarea>
+        </div>
+        <button id="generateBtn" class="btn" style="width:100%" onclick="generateTopic()">生成真实结果</button>
+        <div id="status" class="status"></div>
+      </div>
+    </section>
+
+    <section id="directions" class="section white">
+      <div class="container">
+        <h2>研究方向地图</h2>
+        <p class="section-intro">这里输出的不是“唯一正确选题”，而是可以继续查文献、和导师讨论、评估可行性的候选方向。</p>
+        <div id="directionsGrid" class="direction-grid">
+          <article class="direction-card">
+            <h3>等待生成结果</h3>
+            <p class="muted">请在上方填写兴趣方向，然后点击“生成真实结果”。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="keywords" class="section">
+      <div class="container two-col">
+        <div class="card">
+          <h2>关键词路径</h2>
+          <p class="section-intro">选定方向后，工具会把它变成可检索的关键词组合。</p>
+          <div id="keywordsBox">
+            <div class="keyword-box"><span>等待生成关键词</span><span>—</span></div>
+          </div>
+        </div>
+
+        <div class="brief">
+          <h2>导师讨论简报</h2>
+          <p style="color:#cbd5e1">这个工具应该产出“可以拿去和导师讨论的材料”，而不是让 AI 替学生拍板。</p>
+          <div id="advisorBrief">
+            <div class="brief-item"><strong>等待生成</strong>生成后，这里会出现候选方向、可行理由和建议向导师确认的问题。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screening" class="section white">
+      <div class="container">
+        <h2>下一步文献搜索建议</h2>
+        <p class="section-intro">先用这些关键词去 Google Scholar / Semantic Scholar / OpenAlex 搜索，再把结果粘回来做初筛。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>建议搜索词</th>
+                <th>适合查什么</th>
+                <th>优先级</th>
+                <th>注意事项</th>
+              </tr>
+            </thead>
+            <tbody id="searchPlanBody">
+              <tr>
+                <td>等待生成</td>
+                <td>等待生成</td>
+                <td><span class="rel-mid">—</span></td>
+                <td>生成后会显示下一步搜索计划。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="box-shadow:none;margin-top:20px;background:#f8fafc">
+          ⚠️ TopicScout 不替代导师判断。它只是让学生的早期探索更结构化、更可见、更容易讨论。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      })[m]);
+    }
+
+    function setStatus(type, text) {
+      const el = document.getElementById("status");
+      el.className = "status " + type;
+      el.textContent = text;
+    }
+
+    function renderResults(data) {
+      const directions = data.directions || [];
+      const directionsGrid = document.getElementById("directionsGrid");
+      directionsGrid.innerHTML = directions.map(card => `
+        <article class="direction-card">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+            <div>
+              <h3>${escapeHtml(card.title)}</h3>
+              <p class="muted">${escapeHtml(card.fit || "")}</p>
+            </div>
+            <span class="badge">${escapeHtml(card.stage || "")}</span>
+          </div>
+          <p>${escapeHtml(card.description || "")}</p>
+          <div class="metrics">
+            <div class="metric">热度 <strong>${escapeHtml(card.heat || "未知")}</strong></div>
+            <div class="metric">可行性 <strong>${escapeHtml(card.feasibility || "未知")}</strong></div>
+          </div>
+          <div class="warn">⚠️ ${escapeHtml(card.risk || "需要进一步和导师确认。")}</div>
+          <strong>可研究问题</strong>
+          <ul>${(card.questions || []).map(q => `<li>${escapeHtml(q)}</li>`).join("")}</ul>
+          <div class="tags">${(card.methods || []).map(m => `<span class="tag">${escapeHtml(m)}</span>`).join("")}</div>
+        </article>
+      `).join("") || `<article class="direction-card"><h3>没有生成方向</h3><p class="muted">请换一个兴趣方向再试。</p></article>`;
+
+      const keywords = data.keyword_paths || [];
+      document.getElementById("keywordsBox").innerHTML = keywords.map(k => `
+        <div class="keyword-box"><span>${escapeHtml(k)}</span><span>复制</span></div>
+      `).join("") || `<div class="keyword-box"><span>没有生成关键词</span><span>—</span></div>`;
+
+      const brief = data.advisor_brief || {};
+      document.getElementById("advisorBrief").innerHTML = `
+        <div class="brief-item"><strong>候选方向</strong>${escapeHtml(brief.candidate_direction || "")}</div>
+        <div class="brief-item"><strong>为什么可行</strong>${escapeHtml(brief.why_it_may_work || "")}</div>
+        <div class="brief-item"><strong>建议问导师的问题</strong>${escapeHtml(brief.questions_for_advisor || "")}</div>
+      `;
+
+      const searchPlan = data.search_plan || [];
+      document.getElementById("searchPlanBody").innerHTML = searchPlan.map(item => `
+        <tr>
+          <td>${escapeHtml(item.query)}</td>
+          <td>${escapeHtml(item.what_to_find)}</td>
+          <td><span class="${item.priority === '高' ? 'rel-high' : item.priority === '中' ? 'rel-mid' : 'rel-low'}">${escapeHtml(item.priority || "中")}</span></td>
+          <td>${escapeHtml(item.note || "")}</td>
+        </tr>
+      `).join("") || `<tr><td>没有生成</td><td>没有生成</td><td><span class="rel-mid">—</span></td><td>请重试。</td></tr>`;
+
+      document.getElementById("directions").scrollIntoView({ behavior: "smooth" });
+    }
+
+    async function generateTopic() {
+      const btn = document.getElementById("generateBtn");
+      btn.disabled = true;
+      setStatus("loading", "正在调用 AI 生成，请稍等……");
+
+      const payload = {
+        interest: document.getElementById("interest").value,
+        stage: document.getElementById("stage").value,
+        goal: document.getElementById("goal").value,
+        method: document.getElementById("method").value,
+        constraints: document.getElementById("constraints").value
+      };
+
+      try {
+        const res = await fetch("/.netlify/functions/generate-topic", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "生成失败");
+        }
+
+        renderResults(data);
+        setStatus("ok", "生成成功。你可以继续调整兴趣和约束，再生成不同版本。");
+      } catch (err) {
+        console.error(err);
+        setStatus("error", "生成失败：" + err.message + "。如果你还没设置 OPENAI_API_KEY，需要先在 Netlify 环境变量里添加。");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

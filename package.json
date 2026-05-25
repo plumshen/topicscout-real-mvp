@@ -1,0 +1,12 @@
+{
+  "name": "topicscout-real-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "netlify dev",
+    "build": "echo 'Static site: no build step required'"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.38.1"
+  }
+}
