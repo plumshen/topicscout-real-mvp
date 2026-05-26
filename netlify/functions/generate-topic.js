@@ -107,8 +107,8 @@ JSON 格式如下：
             content: prompt
           }
         ],
-        temperature: 0.2,
-        max_tokens: 600
+        temperature: 0.3,
+        max_tokens: 1200
       })
     });
 
