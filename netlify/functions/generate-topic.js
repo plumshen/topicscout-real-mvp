@@ -82,11 +82,12 @@ JSON 结构必须为：
 }
 
 要求：
-1. directions 给 3 个，不要太泛，要能变成论文或开题方向。
-2. 每个方向都要写风险，不要只说好话。
-3. keyword_paths 用英文，因为用户后续可能查 Google Scholar / Semantic Scholar。
-4. 不要承诺一定能发论文或一定有前景。
-5. 语言用中文，清晰、具体、克制。
+1. directions 只给 2 个。
+2. 每个方向只给 2 个 questions 和 2 个 methods。
+3. keyword_paths 只给 3 个。
+4. search_plan 只给 2 个。
+5. advisor_brief 每个字段控制在 50 字以内。
+6. 必须只输出 JSON，不要 Markdown，不要解释。
 `;
 
   try {
@@ -96,17 +97,17 @@ JSON 结构必须为：
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model,
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: 0.4
-      })
-    });
+    body: JSON.stringify({
+  model,
+  messages: [
+    {
+      role: "user",
+      content: prompt
+    }
+  ],
+  temperature: 0.3,
+  max_tokens: 800
+});
 
     const raw = await response.text();
 
