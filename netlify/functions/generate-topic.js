@@ -7,12 +7,14 @@ exports.handler = async function(event) {
     };
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.ZHIPU_API_KEY;
+  const model = process.env.ZHIPU_MODEL || "glm-4-flash";
+
   if (!apiKey) {
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "服务器未配置 OPENAI_API_KEY" })
+      body: JSON.stringify({ error: "服务器未配置 ZHIPU_API_KEY" })
     };
   }
 
@@ -88,15 +90,21 @@ JSON 结构必须为：
 `;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-5.4-mini",
-        input: prompt
+        model,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.4
       })
     });
 
@@ -106,7 +114,9 @@ JSON 结构必须为：
       return {
         statusCode: response.status,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: `OpenAI API 错误：${raw.slice(0, 400)}` })
+        body: JSON.stringify({
+          error: `智谱 API 错误：${raw.slice(0, 500)}`
+        })
       };
     }
 
@@ -117,20 +127,28 @@ JSON 结构必须为：
       return {
         statusCode: 502,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "OpenAI 返回格式无法解析" })
+        body: JSON.stringify({ error: "智谱返回格式无法解析" })
       };
     }
 
-    const outputText = parsedResponse.output_text || extractOutputText(parsedResponse);
+    const outputText =
+      parsedResponse?.choices?.[0]?.message?.content ||
+      parsedResponse?.choices?.[0]?.delta?.content ||
+      "";
+
     if (!outputText) {
       return {
         statusCode: 502,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "OpenAI 没有返回文本内容" })
+        body: JSON.stringify({ error: "智谱没有返回文本内容" })
       };
     }
 
-    const cleaned = outputText.replace(/```json|```/g, "").trim();
+    const cleaned = outputText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
     let data;
     try {
       data = JSON.parse(cleaned);
@@ -138,7 +156,10 @@ JSON 结构必须为：
       return {
         statusCode: 502,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "AI 返回内容不是有效 JSON", raw: cleaned.slice(0, 1000) })
+        body: JSON.stringify({
+          error: "AI 返回内容不是有效 JSON",
+          raw: cleaned.slice(0, 1000)
+        })
       };
     }
 
@@ -151,23 +172,9 @@ JSON 结构必须为：
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: error.message || "服务器错误" })
+      body: JSON.stringify({
+        error: error.message || "服务器错误"
+      })
     };
   }
 };
-
-function extractOutputText(payload) {
-  try {
-    const parts = [];
-    for (const item of payload.output || []) {
-      for (const content of item.content || []) {
-        if (content.type === "output_text" && content.text) {
-          parts.push(content.text);
-        }
-      }
-    }
-    return parts.join("\n");
-  } catch (e) {
-    return "";
-  }
-}
