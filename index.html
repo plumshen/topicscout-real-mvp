@@ -293,21 +293,29 @@
 
       try {
         const res = await fetch("/.netlify/functions/generate-topic", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "生成失败");
-        }
+const text = await res.text();
+
+let data;
+try {
+  data = JSON.parse(text);
+} catch (e) {
+  throw new Error("后端没有返回 JSON，实际返回了：" + text.slice(0, 200));
+}
+
+if (!res.ok) {
+  throw new Error(data.error || "生成失败");
+}
 
         renderResults(data);
         setStatus("ok", "生成成功。你可以继续调整兴趣和约束，再生成不同版本。");
       } catch (err) {
         console.error(err);
-        setStatus("error", "生成失败：" + err.message + "。如果你还没设置 OPENAI_API_KEY，需要先在 Netlify 环境变量里添加。");
+        setStatus("error", "生成失败：" + err.message + "。请检查 Netlify Function 日志、ZHIPU_API_KEY、ZHIPU_MODEL 和模型是否超时。");
       } finally {
         btn.disabled = false;
       }
