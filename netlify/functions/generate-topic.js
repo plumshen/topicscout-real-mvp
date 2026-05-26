@@ -83,12 +83,13 @@ JSON 格式如下：
 }
 
 要求：
-1. directions 只给 1 个。
-2. questions 只给 2 个。
-3. methods 只给 2 个。
-4. keyword_paths 只给 2 个。
-5. search_plan 只给 1 个。
-6. 所有内容尽量短。
+1. directions 给 2 个。
+2. 每个方向的 questions 给 2 个。
+3. 每个方向的 methods 给 2 个。
+4. keyword_paths 给 4 个。
+5. search_plan 给 2 个。
+6. advisor_brief 每个字段控制在 60 字以内。
+7. 所有内容尽量具体、简洁，不要空泛。
 `;
 
   try {
